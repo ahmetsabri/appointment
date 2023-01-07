@@ -15,8 +15,11 @@
                     <b> {{$appointment['day_name']}}</b>
                 </h5>
     @if(!$appointment['off'])
-                @foreach($appointment['available_hours'] as $time)
-                <form action="{{route('reserve')}}" method="post">
+
+                @foreach($appointment['business_hours'] as $time)
+
+                @if (!in_array($time, $appointment['reserved_hours']))
+       <form action="{{route('reserve')}}" method="post">
                 @csrf
                     <input type="hidden" name="date" value=" {{$appointment['full_date']}}">
                     <input type="hidden" name="time" value="{{$time}}">
@@ -26,6 +29,13 @@
                         <br>
                         <br>
                     </form>
+                @else
+                        <button class="waves-effect waves-light btn info darken-2" disabled>
+                            {{$time}}
+                        </button>
+
+                @endif
+
                 @endforeach
     @endif
 

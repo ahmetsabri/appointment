@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\BusinessHoursRequest;
 use App\Models\BusinessHour;
 use Illuminate\Http\Request;
 
@@ -13,11 +14,10 @@ class BusinessHourController extends Controller
         return view('appointments.business_hours', compact('businessHours'));
     }
 
-    public function update(Request $request)
+    public function update(BusinessHoursRequest $request)
     {
-       $data = array_values($request->all()['data']);
 
-       BusinessHour::query()->upsert($data,['day']);
+       BusinessHour::query()->upsert($request->validated()['data'],['day']);
 
        return back();
     }

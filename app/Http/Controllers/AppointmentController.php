@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\AppointmentRequest;
 use App\Models\Appointment;
 use App\Models\BusinessHour;
+use App\Services\AppointmentService;
 use Carbon\CarbonPeriod;
 use Illuminate\Http\Request;
 
@@ -14,31 +16,15 @@ class AppointmentController extends Controller
         $datePeriod = CarbonPeriod::create(now(), now()->addDays(6));
 
         $appointments = [];
+
         foreach($datePeriod as $date){
-            $dayName = $date->format('l');
-
-            $businessHours = BusinessHour::where('day',$dayName)->first();
-
-            $hours = $businessHours->TimesPeriod;
-            $currentAppointments = Appointment::where('date', $date->toDateString())->pluck('time')->map(function($time){
-                return $time->format('H:i');
-            })->toArray();
-
-           $availbleHours = array_diff($hours,$currentAppointments);
-
-            $appointments[] = [
-                'day_name' => $dayName,
-                'date' => $date->format('d M'),
-                'full_date' => $date->format('Y-m-d'),
-                'available_hours' => $availbleHours,
-                'off' => $businessHours->off
-            ];
+            $appointments [] = (new AppointmentService)->generateTimeData($date);
         }
 
         return view('appointments.reserve', compact('appointments'));
     }
 
-    public function reserve(Request $request)
+    public function reserve(AppointmentRequest $request)
     {
 
         $data = $request->merge(['user_id'=>auth()->id()])->toArray();

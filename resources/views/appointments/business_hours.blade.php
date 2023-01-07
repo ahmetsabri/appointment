@@ -31,7 +31,7 @@
             <div class="input-field col s3">
                 <p>
                     <label>
-                        <input name="data[{{$businessHour->day}}][off]" class="filled-in" type="checkbox" @checked($businessHour->off) />
+                        <input value="true" name="data[{{$businessHour->day}}][off]" class="filled-in" type="checkbox" @checked($businessHour->off) />
                         <span>OFF</span>
                     </label>
                 </p>
